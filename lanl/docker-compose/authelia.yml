@@ -1,0 +1,30 @@
+
+version: "3.7"
+services:
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    hostname: authelia
+    environment:
+      - DSN=postgres://authelia-user:${AUTHELIA_POSTGRES_PASSWORD}@postgres:5432/autheliadb?sslmode=disable?max_conn=20&max_idle_conns=4
+    volumes:
+      - ./configs/authelia:/config
+    restart: unless-stopped
+    ports:
+      - 9091:9091
+    networks:
+      - internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+#  authelia-migrate:
+#    image: authelia/authelia:latest
+#    container_name: authelia-migrate
+#    environment:
+#      - DSN=postgres://authelia-user:${AUTHELIA_POSTGRES_PASSWORD}@postgres:5432/autheliadb?sslmode=disable?max_conns=20&max_idle_conns=4
+#    command: migrate -c /config/configuration.yml sql -e --yes
+#    volumes:
+#      - ./configs/authelia:/config
+#    restart: on-failure
+#    networks:
+#      - internal
